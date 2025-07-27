@@ -38,8 +38,3 @@ The app will open in your browser at [http://localhost:8501](http://localhost:85
 - Authenticate with QuickBooks Online via the sidebar before importing.
 - Make sure your QuickBooks company has the referenced deposit accounts and a "Sales of Product Income" account.
 - The app supports only CSV files with the required columns.
-
----
-
-## License
-MIT

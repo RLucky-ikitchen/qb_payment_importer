@@ -44,9 +44,9 @@ def validate_columns(df):
 
 if uploaded_file:
     try:
-        # Read CSV skipping first 2 rows and using 3rd row as header
+        # Read CSV skipping first 1 row and using 2nd row as header
         st.info("Reading CSV file...")
-        df = pd.read_csv(uploaded_file, skiprows=2, header=0)
+        df = pd.read_csv(uploaded_file, skiprows=1, header=0)
         st.success(f"CSV loaded successfully. Found {len(df)} rows.")
         
         # Show raw column names for debugging

@@ -19,7 +19,7 @@ if not is_authenticated():
             success = exchange_code_for_token(code)
             if success:
                 st.sidebar.success("Authenticated with QuickBooks!")
-                st.experimental_rerun()
+                st.rerun()
             else:
                 st.sidebar.error("Authentication failed. Check the code and try again.")
         else:

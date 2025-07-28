@@ -45,19 +45,36 @@ def validate_columns(df):
 if uploaded_file:
     try:
         # Read CSV skipping first 2 rows and using 3rd row as header
+        st.info("Reading CSV file...")
         df = pd.read_csv(uploaded_file, skiprows=2, header=0)
+        st.success(f"CSV loaded successfully. Found {len(df)} rows.")
         
-        # Clean up the data - remove summary rows and empty rows
-        df = df.dropna(subset=['Payment amount'])  # Remove rows with no payment amount
-        df = df[df['Payment amount'] != 0]  # Remove rows with zero payment amount (optional)
+        # Show raw column names for debugging
+        st.write("Raw column names:", df.columns.tolist())
         
+        # Validate columns first
         missing_cols, actual_cols = validate_columns(df)
         if missing_cols:
             st.error(f"Missing columns: {', '.join(missing_cols)}")
             st.error(f"Actual columns found: {', '.join(actual_cols)}")
             st.error("Please upload a standardized ServQuick export file.")
         else:
-            st.success("File uploaded and validated!")
+            st.success("Columns validated successfully!")
+            
+            # Clean up the data - remove summary rows and empty rows
+            st.info("Cleaning data...")
+            initial_rows = len(df)
+            
+            # Check if Payment amount column exists before cleaning
+            if 'Payment amount' in df.columns:
+                df = df.dropna(subset=['Payment amount'])  # Remove rows with no payment amount
+                df = df[df['Payment amount'] != 0]  # Remove rows with zero payment amount (optional)
+                final_rows = len(df)
+                st.success(f"Data cleaned: {initial_rows} → {final_rows} rows")
+            else:
+                st.error("Payment amount column not found after validation!")
+                st.stop()
+            
             st.subheader("Preview Data")
             st.dataframe(df.head(20))
             st.write(f"Total rows: {len(df)}")
@@ -82,6 +99,10 @@ if uploaded_file:
     except Exception as e:
         st.error(f"Failed to read CSV: {e}")
         st.error("Please ensure the CSV file is a valid ServQuick export with the correct format.")
+        # Show more debug info
+        st.write("Debug info:")
+        st.write(f"File name: {uploaded_file.name}")
+        st.write(f"File size: {uploaded_file.size} bytes")
 else:
     st.info("Please upload a ServQuick payment CSV file to begin.")
 

@@ -20,13 +20,13 @@ class MockSalesReceipt:
         self.Id = f"mock_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}"
         return self
 
-# Hardcoded mapping: Payment type to QuickBooks DepositToAccount name
-PAYMENT_TYPE_TO_ACCOUNT = {
+# Hardcoded mapping: Payment name to QuickBooks DepositToAccount name
+PAYMENT_NAME_TO_ACCOUNT = {
     "Cash": "Cash on hand",
     "Card": "Bank Account",
-    "Credit": "Accounts Receivable",
     "Bkash": "Bkash Account",
-    "E-Gen": "E-Gen Account"
+    "E-Gen": "E-Gen Account",
+    "Due Bill": "Accounts Receivable"
 }
 
 def get_account_ref_by_name(qb_client, name):
@@ -60,11 +60,11 @@ def import_sales_receipts(df, qb_client):
     
     for idx, row in df.iterrows():
         try:
-            # Map payment type to deposit account
-            payment_type = row["Payment type"]
-            deposit_account_name = PAYMENT_TYPE_TO_ACCOUNT.get(payment_type)
+            # Map payment name to deposit account
+            payment_name = row["Payment name"]
+            deposit_account_name = PAYMENT_NAME_TO_ACCOUNT.get(payment_name)
             if not deposit_account_name:
-                logs.append(f"Row {idx+1}: Unknown payment type '{payment_type}'. Skipped.")
+                logs.append(f"Row {idx+1}: Unknown payment name '{payment_name}'. Skipped.")
                 continue
             deposit_account_ref = get_account_ref_by_name(qb_client, deposit_account_name)
 
@@ -74,9 +74,9 @@ def import_sales_receipts(df, qb_client):
             # Create sales receipt
             sales_receipt = MockSalesReceipt()
             sales_receipt.CustomerRef = MockRef(customer.Id, "Customer")
-            sales_receipt.TxnDate = datetime.datetime.strptime(str(row["Sales Date"]), "%Y-%m-%d").date()
+            sales_receipt.TxnDate = datetime.datetime.strptime(str(row["Sales date"]), "%Y-%m-%d").date()
             sales_receipt.DepositToAccountRef = deposit_account_ref
-            sales_receipt.PrivateNote = f"Imported from ServQuick: {payment_type}"
+            sales_receipt.PrivateNote = f"Imported from ServQuick: {payment_name}"
             
             # Mock save
             sales_receipt.save(qb_client)

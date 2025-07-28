@@ -34,14 +34,20 @@ uploaded_file = st.file_uploader("Choose a CSV file", type=["csv"])  # Only CSV 
 
 def validate_columns(df):
     required_cols = [
-        "Sales Date", "Location name", "Payment type", "Payment Amount", "Tender Tax Amount"
+        "Location name", "Sales date", "Payment name", "Payment type", "Payment amount", "Tender tax amount"
     ]
     missing = [col for col in required_cols if col not in df.columns]
     return missing
 
 if uploaded_file:
     try:
-        df = pd.read_csv(uploaded_file)
+        # Read CSV skipping first 2 rows and using 3rd row as header
+        df = pd.read_csv(uploaded_file, skiprows=2, header=0)
+        
+        # Clean up the data - remove summary rows and empty rows
+        df = df.dropna(subset=['Payment amount'])  # Remove rows with no payment amount
+        df = df[df['Payment amount'] != 0]  # Remove rows with zero payment amount (optional)
+        
         missing_cols = validate_columns(df)
         if missing_cols:
             st.error(f"Missing columns: {', '.join(missing_cols)}. Please upload a standardized file.")

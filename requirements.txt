@@ -4,4 +4,3 @@ python-dotenv
 requests-oauthlib
 python-quickbooks
 intuit-oauth
-intuitlib 

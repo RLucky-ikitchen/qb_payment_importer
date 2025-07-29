@@ -3,4 +3,5 @@ pandas
 python-dotenv
 requests-oauthlib
 python-quickbooks
-intuit-oauth 
+intuit-oauth
+intuitlib 

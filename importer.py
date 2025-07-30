@@ -29,7 +29,7 @@ def get_account_ref_by_name(qb_client, name):
             account.save(qb_client)
             return account.to_ref()
     except QuickbooksException as e:
-        print(f"Error getting account {name}: {e}")
+        print(f"Error getting account {name}: {str(e)}")
         return None
 
 def get_or_create_generic_customer(qb_client, location_name):
@@ -46,7 +46,7 @@ def get_or_create_generic_customer(qb_client, location_name):
             customer.save(qb_client)
             return customer
     except QuickbooksException as e:
-        print(f"Error creating customer {location_name}: {e}")
+        print(f"Error creating customer {location_name}: {str(e)}")
         return None
 
 def get_or_create_generic_item(qb_client):
@@ -65,7 +65,7 @@ def get_or_create_generic_item(qb_client):
             item.save(qb_client)
             return item
     except QuickbooksException as e:
-        print(f"Error creating item: {e}")
+        print(f"Error creating item: {str(e)}")
         return None
 
 def import_sales_receipts(df, qb_client):
@@ -127,8 +127,8 @@ def import_sales_receipts(df, qb_client):
             logs.append(f"Row {idx+1}: Imported successfully as SalesReceipt #{sales_receipt.Id}.")
             
         except QuickbooksException as e:
-            logs.append(f"Row {idx+1}: QuickBooks API error: {e}")
+            logs.append(f"Row {idx+1}: QuickBooks API error: {str(e)}")
         except Exception as e:
-            logs.append(f"Row {idx+1}: Failed to import. Error: {e}")
+            logs.append(f"Row {idx+1}: Failed to import. Error: {str(e)}")
     
     return logs

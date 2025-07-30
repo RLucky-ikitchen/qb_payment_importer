@@ -95,9 +95,9 @@ if uploaded_file:
                             for log in logs:
                                 st.write(log)
                         except Exception as e:
-                            st.error(f"Import failed: {e}")
+                            st.error(f"Import failed: {str(e)}")
     except Exception as e:
-        st.error(f"Failed to read CSV: {e}")
+        st.error(f"Failed to read CSV: {str(e)}")
         st.error("Please ensure the CSV file is a valid ServQuick export with the correct format.")
         # Show more debug info
         st.write("Debug info:")

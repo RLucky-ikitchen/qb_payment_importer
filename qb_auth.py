@@ -74,7 +74,7 @@ def exchange_code_for_token(code):
         save_token(token_data)
         return True
     except Exception as e:
-        print(f"Token exchange failed: {e}")
+        print(f"Token exchange failed: {str(e)}")
         return False
 
 def get_qb_client():
@@ -82,11 +82,18 @@ def get_qb_client():
     if not token_data:
         raise Exception("Not authenticated with QuickBooks.")
     
-    # Initialize QuickBooks client
-    qb = QuickBooks(
-        auth_client=get_auth_client(),
-        refresh_token=token_data.get("refresh_token"),
-        company_id=token_data.get("realm_id"),
-        sandbox=(ENVIRONMENT == "sandbox")
-    )
-    return qb
+    # Initialize QuickBooks client with proper authentication
+    auth_client = get_auth_client()
+    auth_client.access_token = token_data.get("access_token")
+    auth_client.refresh_token = token_data.get("refresh_token")
+    
+    try:
+        qb = QuickBooks(
+            auth_client=auth_client,
+            refresh_token=token_data.get("refresh_token"),
+            company_id=token_data.get("realm_id"),
+            sandbox=(ENVIRONMENT == "sandbox")
+        )
+        return qb
+    except Exception as e:
+        raise Exception(f"Failed to initialize QuickBooks client: {str(e)}")

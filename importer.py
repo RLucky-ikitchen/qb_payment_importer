@@ -18,7 +18,7 @@ def get_account_ref_by_name(qb_client, name):
     """Get QuickBooks account reference by name"""
     try:
         # Search for account by name
-        accounts = Account.filter(qb_client, DisplayName=name)
+        accounts = Account.filter(DisplayName=name, qb=qb_client)
         if accounts:
             return accounts[0].to_ref()
         else:
@@ -36,7 +36,7 @@ def get_or_create_generic_customer(qb_client, location_name):
     """Get or create a customer in QuickBooks"""
     try:
         # Search for existing customer
-        customers = Customer.filter(qb_client, DisplayName=location_name)
+        customers = Customer.filter(DisplayName=location_name, qb=qb_client)
         if customers:
             return customers[0]
         else:
@@ -53,7 +53,7 @@ def get_or_create_generic_item(qb_client):
     """Get or create a generic service item for ServQuick sales"""
     try:
         # Search for existing item
-        items = Item.filter(qb_client, Name="ServQuick Sale")
+        items = Item.filter(Name="ServQuick Sale", qb=qb_client)
         if items:
             return items[0]
         else:

@@ -46,21 +46,28 @@ def get_or_create_generic_customer(qb_client, location_name):
         return None
 
 def get_or_create_generic_item(qb_client):
-    """Get or create a generic service item for ServQuick sales"""
     try:
+        print("Searching for item 'ServQuick Sale'")
         items = Item.filter(Name="ServQuick Sale", qb=qb_client)
         if items:
+            print("Item found")
             return items[0]
         else:
+            print("Item not found, creating new one")
             item = Item()
             item.Name = "ServQuick Sale"
             item.Type = "Service"
             item.Description = "Service sale imported from ServQuick"
             item.save(qb=qb_client)
+            print("Item created successfully")
             return item
     except QuickbooksException as e:
-        print(f"Error creating item: {str(e)}")
+        print(f"QuickBooksException in item creation: {e}")
         return None
+    except Exception as e:
+        print(f"Unexpected error in item creation: {e}")
+        return None
+
 
 def import_sales_receipts(df, qb_client):
     """Import sales receipts to QuickBooks Online using real API calls."""
@@ -104,7 +111,7 @@ def import_sales_receipts(df, qb_client):
 
             # Add line item
             from quickbooks.objects.detailline import SalesItemLineDetail
-            from quickbooks.objects.line import Line
+            from quickbooks.objects.salesreceipt import Line
 
             line = Line()
             line.Amount = float(row["Payment amount"])
